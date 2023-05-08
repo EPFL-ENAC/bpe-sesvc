@@ -5,7 +5,7 @@ function(newDoc, oldDoc, userCtx, secObj) {
 
     // create
     if (!oldDoc) {
-        if (Array.isArray(newDoc.users) && newDoc.users.includes(userCtx.name)) {
+        if (Array.isArray(newDoc.users) && newDoc.users.map(u => u.name).includes(userCtx.name)) {
             return;
         } else {
             throw ({ forbidden: 'users field should contain current user' });
