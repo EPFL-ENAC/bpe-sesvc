@@ -95,11 +95,14 @@
   {
     "_id": "org.couchdb.user:yannick.marcon@epfl.ch",
     "name": "yannick.marcon@epfl.ch",
-    "roles": [],
+    "roles": [
+      "user",
+      "admin"
+    ],
     "type": "user",
     "password_scheme": "pbkdf2",
     "iterations": 10,
-    "derived_key": "8919326f78a94920aba75b81c343298378935c0c",
-    "salt": "7e40313dbb4f477aaf5f5cecf94a5b09"
+    "derived_key": "d70412eea4a85d758d393414bac3987c8f4c25f7",
+    "salt": "d6ca38b630a4838696c26e467d544359"
   }
 ]
