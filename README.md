@@ -160,14 +160,6 @@ make azure
 - then copy the content of the json `azure/jwt_keys.json` at the proper place inside couchdb-setup/bootstrap/_config.json
 - verify that the json is valid
 
-## file uploads
-- 2 services necessary
-  - nginx proxy to our custom epfl s3 instance
-  - python fast api using boto3 to upload files to the s3 instance
-We don't store the uploaded file directly to a database, it should be done by the frontend by talking directly to couchdb. The API just return the path served by the nginx reverse proxy
-
-
-
 ## Collaborators
 
 [EPFL Essential Tech Center](https://www.essentialtech.ch/)
