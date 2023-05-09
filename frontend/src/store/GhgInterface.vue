@@ -1,5 +1,4 @@
 <script lang="ts">
-import { WashTruckingSurvey } from "@/components/green_house_gaz/wash/Trucking.vue";
 import { ShelterRegions } from "@/store/ShelterInterface";
 import { CouchUser } from "./UserModule";
 // import { Material } from "@/store/ShelterInterface";
@@ -49,12 +48,11 @@ export interface GreenHouseGaz {
 
 export interface SurveyForms {
   energy: EnergySurvey;
-  wash: WashSurvey;
   material: MaterialSurvey;
   offset: OffsetSurvey;
 }
 
-// export type SurveyCategory = "energy" | "wash" | "material" | "offset";
+// export type SurveyCategory = "energy" | "material" | "offset";
 
 export type SurveyCategory = keyof SurveyForms;
 
@@ -92,11 +90,6 @@ export interface EnergySurvey {
   >;
 }
 export type EnergySurveyCategory = keyof EnergySurvey;
-
-// should be generic survey with import type from Trucking.vue
-export interface WashSurvey {
-  trucking: WashTruckingSurvey;
-}
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -274,7 +267,6 @@ export interface OffsetSurvey {
 // }
 export type SurveySubcategory =
   | keyof EnergySurvey
-  | keyof WashSurvey
   | keyof MaterialSurvey
   | keyof OffsetSurvey;
 </script>

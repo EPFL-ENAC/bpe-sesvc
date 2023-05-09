@@ -51,14 +51,6 @@
       </v-menu>
 
       <v-btn
-        v-if="$router.currentRoute.name?.includes('Shelter')"
-        icon
-        aria-label="dataset-overview-table"
-        @click.stop="toggleOverviewData"
-      >
-        <v-icon> $mdiChartBarStacked </v-icon>
-      </v-btn>
-      <v-btn
         icon
         aria-label="dataset-reference-table"
         @click.stop="toggleReferenceData"
@@ -267,7 +259,6 @@ import { unhcr_logo } from "@/components/commons/logos";
 import HelperCenter from "@/components/HelperCenter.vue";
 import LoginComponent from "@/components/LoginComponent.vue";
 import NotificationCenter from "@/components/NotificationCenter.vue";
-import OverviewData from "@/components/OverviewData.vue";
 import ReferenceData from "@/components/ReferenceData.vue";
 
 import { CouchUser } from "@/store/UserModule";
@@ -284,7 +275,6 @@ import { UnhcrNotification } from "./store";
     ...mapGetters("UserModule", ["user"]),
     ...mapGetters([
       "referenceDataDrawer",
-      "overviewDataDrawer",
       "notificationDialog",
       "notificationsLength",
     ]),
@@ -297,7 +287,6 @@ import { UnhcrNotification } from "./store";
     }),
     ...mapActions([
       "toggleReferenceData",
-      "toggleOverviewData",
       "toggleNotificationCenter",
       "setHelper",
     ]),
@@ -305,7 +294,6 @@ import { UnhcrNotification } from "./store";
   components: {
     LoginComponent,
     ReferenceData,
-    OverviewData,
     NotificationCenter,
     HelperCenter,
   },
@@ -313,7 +301,6 @@ import { UnhcrNotification } from "./store";
 /** ProjectList */
 export default class App extends Vue {
   referenceDataDrawer!: boolean;
-  overviewDataDrawer!: boolean;
   notificationDialog!: boolean;
   toggleReferenceData!: () => AxiosPromise;
   toggleNotificationCenter!: () => void;
@@ -328,7 +315,7 @@ export default class App extends Vue {
   refreshToken!: () => AxiosPromise;
   user!: CouchUser;
   md5Function: (v: string) => string = md5;
-  title = "UNHCR-TSS"; // use env variable,
+  title = "BPE SESVC"; // use env variable,
   /** Drawer menu visibility */
   drawer = true;
   mini = true;

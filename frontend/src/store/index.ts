@@ -1,15 +1,6 @@
 import { themeColor } from "@/plugins/vuetify";
 import ConfigModule from "@/store/ConfigModule";
 import EnergyModule from "@/store/EnergyModule";
-import GhgModule from "@/store/GhgModule";
-import GHGReferencefNRB from "@/store/GHGReferencefNRB";
-import GhgReferenceIgesGridModule from "@/store/GhgReferenceIgesGridModule";
-import GhgReferenceModule from "@/store/GhgReferenceModule";
-import GhgReferenceSolarModule from "@/store/GHGReferenceSolarModule";
-import ShelterBillOfQuantitiesModule from "@/store/ShelterBillOfQuantitiesModule";
-import ShelterModule from "@/store/ShelterModule";
-import SheltersMaterialModule from "@/store/SheltersMaterialModule";
-import SheltersTransportModule from "@/store/SheltersTransportModule";
 import UNHCRLocation from "@/store/UNHCRLocation";
 import UserModule from "@/store/UserModule";
 import { throttle } from "lodash";
@@ -41,7 +32,6 @@ export interface RootState {
   notifications: UnhcrNotification[];
   /** Hold value that say if referenceDataDrawer is open or not */
   referenceDataDrawer: boolean;
-  overviewDataDrawer: boolean;
   notificationDialog: boolean;
   helper?: Record<string, string>;
   helperDialog: boolean;
@@ -66,7 +56,6 @@ const state: RootState = {
   error: undefined,
   helper: undefined,
   referenceDataDrawer: false,
-  overviewDataDrawer: false,
   notificationDialog: false,
   helperDialog: false,
 };
@@ -108,7 +97,6 @@ const getters: GetterTree<RootState, RootState> = {
   },
   error: (s): string | undefined => s.error,
   referenceDataDrawer: (s): boolean => s.referenceDataDrawer,
-  overviewDataDrawer: (s): boolean => s.overviewDataDrawer,
   notificationDialog: (s): boolean => s.notificationDialog,
   helperDialog: (s): boolean => s.helperDialog,
   helper: (s): Record<string, string> | undefined => s.helper,
@@ -161,9 +149,6 @@ const mutations: MutationTree<RootState> = {
    */
   storeReferenceDataDrawer(s, value: boolean) {
     s.referenceDataDrawer = value;
-  },
-  storeOverviewDataDrawer(s, value: boolean) {
-    s.overviewDataDrawer = value;
   },
   storeNotificationDialog(s, value: boolean) {
     s.notificationDialog = value;
@@ -247,18 +232,6 @@ const actions: ActionTree<RootState, RootState> = {
   ) {
     context.commit("storeReferenceDataDrawer", referenceDataDrawer);
   },
-  setOverviewDataDrawer(
-    context: ActionContext<RootState, RootState>,
-    overviewDataDrawer = false
-  ) {
-    context.commit("storeOverviewDataDrawer", overviewDataDrawer);
-  },
-  setNotificationDialog(
-    context: ActionContext<RootState, RootState>,
-    notificationDialog = false
-  ) {
-    context.commit("storeOverviewDataDrawer", notificationDialog);
-  },
   /**
    * toggleReferenceData
    */
@@ -266,15 +239,6 @@ const actions: ActionTree<RootState, RootState> = {
     context.commit(
       "storeReferenceDataDrawer",
       !context.state.referenceDataDrawer
-    );
-  },
-  /**
-   * toggleOverviewData
-   */
-  toggleOverviewData(context: ActionContext<RootState, RootState>) {
-    context.commit(
-      "storeOverviewDataDrawer",
-      !context.state.overviewDataDrawer
     );
   },
   toggleNotificationCenter(context: ActionContext<RootState, RootState>) {
@@ -315,15 +279,6 @@ const store: StoreOptions<RootState> = {
   actions,
   modules: {
     ConfigModule,
-    ShelterModule,
-    SheltersTransportModule,
-    SheltersMaterialModule,
-    ShelterBillOfQuantitiesModule,
-    GhgModule,
-    GhgReferenceModule,
-    GhgReferenceIgesGridModule,
-    GhgReferenceSolarModule,
-    GHGReferencefNRB,
     UNHCRLocation,
     UserModule,
     energy: EnergyModule,

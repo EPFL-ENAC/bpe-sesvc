@@ -1,9 +1,9 @@
-# unhcr-geneva-tech-hub-app
+# bpe-sesvc
 
-UNHCR Geneva Technical Hub App
+UNHCR GTH - Energy Planning tool
 
 ## Status
-Currently under development, release 1.0 expected March 2023, then user testing.
+Currently under development.
 
 
 ## Development
@@ -37,16 +37,6 @@ COUCHDB_PASSWORD=couchdb
 COUCHDB_HOST=localhost
 # EPFL DNS
 DNS=128.178.15.8
-
-# used by nginx s3 service and fast api boto api
-S3_ENDPOINT_HOSTNAME=s3.epfl.ch
-S3_ENDPOINT_PROTOCOL=https://
-S3_ACCESS_KEY_ID=XXXXXX_REPLACE__ME_XXX
-S3_SECRET_ACCESS_KEY=XXXXXX_REPLACE__ME_XXX
-S3_REGION=EU
-S3_Bucket=XXXXXX_REPLACE__ME_XXX
-# for instance if S3_Key is foo/bar/ ; the url will start with: /s3/foo/bar/
-S3_Key=XXXXXX_REPLACE__ME_XXX
 
 EOF
 ```
@@ -85,23 +75,21 @@ We use enacit-ansible to automate our process
 Just run the following command and it will install the latest commit from the main branch
 
 ```
-ansible-playbook -v -i inventory/unhcr-tss.epfl.ch.yml  playbooks/deploy-app.yml
+ansible-playbook -v -i inventory/sesvc.epfl.ch.yml  playbooks/deploy-app.yml
 ```
 
 - If you change couchdb-setup/etc/config.ini file
   - You'll need to do the following:
     ```
-    ssh unhcr-tss.epfl.ch
+    ssh sesvc.epfl.ch
     # wait to be connected
-    cd /opt/unhcr-tss;
+    cd /opt/sesvc;
     docker-compose restart couchdb;
     ```
-  - same for unhcr-tss-test.epfl.ch
 
 ### Deployment process
 
-* regular (at least weekly) releases onto the staging environment - http://unhcr-tss-test.epfl.ch/ accessible within EPFL only.
-* monthly (by the 1st) releases onto the production environment  http://unhcr-tss.epfl.ch/ including only features validated.
+* monthly (by the 1st) releases onto the production environment  http://sesvc.epfl.ch/ including only features validated.
 * intermediate releases may happen occasionally for hot fixes 
 
 Releases number follow [semantic versioning conventions](https://semver.org/\). 
