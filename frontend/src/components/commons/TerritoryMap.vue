@@ -30,18 +30,12 @@
 </template>
 
 <script lang="ts">
-import { ShelterType } from "@/store/ShelterInterface";
 import {
   attributionMap,
   defaultCoordinates,
   defaultZoom,
   urlMap,
 } from "@/utils/mapWorld";
-import {
-  alpha,
-  alphaSecondary,
-  shelterColors,
-} from "@/views/shelter_sustainability/shelterTypeColors";
 import L, { LatLng, LeafletMouseEvent } from "leaflet";
 import { Component, Prop, Vue } from "vue-property-decorator";
 import {
@@ -78,9 +72,6 @@ export default class TerritoryMap extends Vue {
   readonly url = urlMap;
   readonly attribution = attributionMap;
 
-  alpha = alpha;
-  alphaSecondary = alphaSecondary;
-  shelterColors = shelterColors;
   selectedZoomFactor = 5;
 
   // duplicate of shelterIcons in shelterTypeColors because of $ sign
@@ -90,13 +81,9 @@ export default class TerritoryMap extends Vue {
     Durable: "mdiHome",
   };
 
-  public getIcon(defaultIcon: string, shelterType: ShelterType): L.DivIcon {
-    let className = `customIcon`;
-    let iconPath = this.$vuetify.icons.values.mdiPin;
-    if (shelterType) {
-      className = `c-${this.shelterColors[shelterType].name} customIcon`;
-      iconPath = this.$vuetify.icons.values[this.shelterIcons[shelterType]];
-    }
+  public getIcon(defaultIcon: string, shelterType: unknown): L.DivIcon {
+    const className = `customIcon`;
+    const iconPath = this.$vuetify.icons.values.mdiPin;
     return L.divIcon({
       html:
         `<svg

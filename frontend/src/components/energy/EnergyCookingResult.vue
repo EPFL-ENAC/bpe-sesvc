@@ -978,12 +978,12 @@ export default class EnergyCookingResult extends Vue {
 
   async downloadExcel(): Promise<void> {
     const buffer = await this.createWorkbook().xlsx.writeBuffer();
-    download(new Uint8Array(buffer), "unhcr-tss-energy-household-cooking.xlsx");
+    download(new Uint8Array(buffer), "sesvc-energy-household-cooking.xlsx");
   }
 
   createWorkbook(): Workbook {
     const workbook = new Workbook();
-    workbook.creator = "unhcr-tss.epfl.ch";
+    workbook.creator = "sesvc.epfl.ch";
     workbook.created = new Date();
 
     const categoryNames = socioEconomicCategories.map((cat) =>

@@ -91,5 +91,18 @@
     "iterations": 10,
     "derived_key": "f2631019653665a54edf1dd2253037078370cf89",
     "salt": "bb38ad00cc58a6f875de698224587342"
+  },
+  {
+    "_id": "org.couchdb.user:yannick.marcon@epfl.ch",
+    "name": "yannick.marcon@epfl.ch",
+    "roles": [
+      "user",
+      "admin"
+    ],
+    "type": "user",
+    "password_scheme": "pbkdf2",
+    "iterations": 10,
+    "derived_key": "d70412eea4a85d758d393414bac3987c8f4c25f7",
+    "salt": "d6ca38b630a4838696c26e467d544359"
   }
 ]

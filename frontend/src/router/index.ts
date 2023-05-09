@@ -1,6 +1,4 @@
 import energyRouter from "@/router/energyRouter";
-import ghgRouter from "@/router/ghgRouter";
-import shelterRouter from "@/router/shelterRouter";
 import Apps from "@/views/AppListView.vue";
 import Login from "@/views/LoginView.vue";
 import Vue from "vue";
@@ -32,7 +30,7 @@ const routes: Array<RouteConfig> = [
     name: "Apps",
     component: Apps,
     meta: {
-      title: "UNHCR-TSS",
+      title: "BPE SESVC",
     },
   },
   {
@@ -60,8 +58,6 @@ const routes: Array<RouteConfig> = [
       import(/* webpackChunkName: "error" */ "../views/ErrorView.vue"),
   },
 ];
-routes.push(ghgRouter);
-routes.push(shelterRouter);
 routes.push(energyRouter);
 
 const router = new VueRouter({
