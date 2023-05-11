@@ -35,6 +35,7 @@
 </template>
 
 <script lang="ts">
+import EnergyCooking from "@/components/reference_data/EnergyCooking.vue";
 import UNHCRLocation from "@/components/reference_data/UNHCRLocation.vue";
 import { Component, Vue } from "vue-property-decorator";
 import { mapActions, mapGetters } from "vuex";
@@ -48,6 +49,7 @@ import { mapActions, mapGetters } from "vuex";
   },
   components: {
     UNHCRLocation,
+    EnergyCooking,
   },
 })
 /** ProjectList */
@@ -64,6 +66,10 @@ export default class App extends Vue {
   }
   readonly menuItems: MenuSurveyItem[] = [
     { tab: "UNHCR Locations", componentName: "UNHCRLocation" },
+    {
+      tab: "Energy Cooking",
+      componentName: "EnergyCooking",
+    },
   ];
   tab = 1;
 }
