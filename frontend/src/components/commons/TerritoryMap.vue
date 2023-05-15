@@ -81,7 +81,7 @@ export default class TerritoryMap extends Vue {
     Durable: "mdiHome",
   };
 
-  public getIcon(defaultIcon: string, shelterType: unknown): L.DivIcon {
+  public getIcon(): L.DivIcon {
     const className = `customIcon`;
     const iconPath = this.$vuetify.icons.values.mdiPin;
     return L.divIcon({

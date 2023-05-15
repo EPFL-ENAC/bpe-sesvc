@@ -48,13 +48,6 @@
         </v-btn>
         <v-btn v-show="showForm" @click="showForm = false">Cancel</v-btn>
         <v-btn v-show="showForm" type="submit" color="primary">Login</v-btn>
-        <v-btn
-          v-show="!showForm"
-          data-cy="unhcr-user-login"
-          color="primary"
-          @click="loginUnhcr"
-          >UNHCR user</v-btn
-        >
       </v-card-actions>
     </v-form>
   </v-card>
