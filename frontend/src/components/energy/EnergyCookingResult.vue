@@ -743,6 +743,11 @@ export default class EnergyCookingResult extends Vue {
   /**
    * Compute new proportions for the next year.
    * Upgrade the categories by moving from a category to a better next one (from lowest to highest) until the target income is reached or everyone is in the best category.
+   * Notes:
+   * - if no income per category is defined, the proportions of the populations will fall down to 0.
+   * - when the average income grows and as the income per category does not change, some populations of
+   *   the lowest category is transferred to the next upper category (thus this new proportions caculation).
+   *   See page 45 of "design of the new tool Cooking7.6.pdf".
    */
   getNewProportions(site: Site): Record<SocioEconomicCategory, number> {
     const proportions = cloneDeep(site.proportions);
