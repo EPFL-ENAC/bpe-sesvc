@@ -2,9 +2,6 @@
   <v-container class="fill-height" fluid>
     <v-dialog v-model="workflowDialog" max-width="900">
       <v-card>
-        <v-card-title>
-          <h2>Welcome to the UNHCR TSS Energy Planning Tool</h2>
-        </v-card-title>
         <v-form v-model="workflowForm">
           <v-card-text>
             <v-row>

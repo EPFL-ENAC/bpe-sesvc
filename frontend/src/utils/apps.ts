@@ -1,5 +1,5 @@
 export const energy = {
-  title: "Energy planning",
+  title: "Sustainable Energy Strategies for Vulnerable Communities",
   to: "energy",
   logoIcon: "$mdiFlash",
   description:
