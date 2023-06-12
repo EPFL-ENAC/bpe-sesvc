@@ -25,7 +25,6 @@
                 ></form-item-component>
               </v-col>
             </v-row>
-            {{ yearTabs }}
             <energy-year-tabs
               v-model="yearTabs[index]"
               :year-offset="yearOffset"
@@ -220,7 +219,8 @@ export default class EnergyCookingScenario extends Vue {
 
   @Watch("scenarios")
   onScenarioChanged(): void {
-    this.yearTabs = new Array(this.scenarios.length).fill(0);
+    if (!this.yearTabs || this.yearTabs.length !== this.scenarios.length)
+      this.yearTabs = new Array(this.scenarios.length).fill(0);
   }
 }
 </script>
