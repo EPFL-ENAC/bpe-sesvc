@@ -25,6 +25,7 @@
                 ></form-item-component>
               </v-col>
             </v-row>
+            {{ yearTabs }}
             <energy-year-tabs
               v-model="yearTabs[index]"
               :year-offset="yearOffset"
