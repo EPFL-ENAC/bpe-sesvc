@@ -174,8 +174,8 @@
       :timeout="-1"
       color="primary"
     >
-      An update is available, updating will reload the page
-      <v-btn text @click="refreshApp"> Update </v-btn>
+      New content is available, please refresh to update.
+      <v-btn text @click="refreshApp"> Refresh </v-btn>
     </v-snackbar>
 
     <v-snackbar
