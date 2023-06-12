@@ -199,6 +199,8 @@ export default class EnergyCookingScenario extends Vue {
         key: id,
         label: `${fuelName} Price Increase Rate`,
         subtype: "percent",
+        min: -1, // -100%
+        max: 10, // +1000%,
         isTemplate: this.isTemplate,
       };
     });
