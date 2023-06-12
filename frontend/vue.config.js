@@ -1,6 +1,3 @@
-// import { setDefaultResultOrder } from "dns";
-// setDefaultResultOrder("ipv4first");
-
 module.exports = {
   configureWebpack: {
     devtool: "source-map",
@@ -8,7 +5,6 @@ module.exports = {
   pwa: {
     workboxPluginMode: "GenerateSW",
     workboxOptions: {
-      skipWaiting: true,
       clientsClaim: true,
     },
   },

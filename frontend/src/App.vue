@@ -168,6 +168,17 @@
     </v-overlay>
 
     <v-snackbar
+      bottom
+      right
+      :value="updateExists"
+      :timeout="-1"
+      color="primary"
+    >
+      An update is available, updating will reload the page
+      <v-btn text @click="refreshApp"> Update </v-btn>
+    </v-snackbar>
+
+    <v-snackbar
       v-model="snackbar"
       class="d-print-none"
       app
@@ -196,6 +207,7 @@ import LoginComponent from "@/components/LoginComponent.vue";
 import NotificationCenter from "@/components/NotificationCenter.vue";
 import ReferenceData from "@/components/ReferenceData.vue";
 
+import update from "@/mixins/update.js";
 import { CouchUser } from "@/store/UserModule";
 import Apps from "@/utils/apps";
 import md5 from "@/utils/md5";
@@ -214,6 +226,7 @@ import { UnhcrNotification } from "./store";
       "notificationsLength",
     ]),
   },
+  mixins: [update],
   methods: {
     ...mapActions("UserModule", {
       logoutStore: "logout",
@@ -401,7 +414,7 @@ export default class App extends Vue {
     this.checkAndRefresh();
     this.intervalId = window.setInterval(() => {
       this.checkAndRefresh();
-    }, 1000 * 60 * 5); // check every 10 minutes: 1000 * 60 * 5
+    }, 1000 * 60 * 15); // check every 15 minutes
 
     this.$store.subscribe((mutation) => {
       const shouldUpdate = ["storeMessage"];
