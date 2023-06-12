@@ -67,6 +67,8 @@ interface RangeFormItem<K> extends AbstractFormItem<K> {
   type: "range";
   isTemplate?: boolean;
   subtype?: "percent";
+  min?: number;
+  max?: number;
 }
 
 interface CountryFormItem<K> extends AbstractFormItem<K> {

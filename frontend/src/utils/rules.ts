@@ -17,12 +17,12 @@ export const checkRequired: Rule = function (value) {
 
 export function checkMin(min: number): Rule {
   return (value) =>
-    (typeof value === "number" && value >= min) || `Mininum ${min}.`;
+    (typeof value === "number" && value >= min) || `Mininum is ${min}.`;
 }
 
 export function checkMax(max: number): Rule {
   return (value) =>
-    (typeof value === "number" && value <= max) || `Maximum ${max}.`;
+    (typeof value === "number" && value <= max) || `Maximum is ${max}.`;
 }
 
 export function check(predicate: () => boolean, error: string): Rule {

@@ -101,8 +101,8 @@
       :rules="rules"
       :ratio="ratio"
       :precision="precision"
-      :min="model.min"
-      :max="model.max"
+      :min="min"
+      :max="max"
       :readonly="readonly"
       :disabled="disabled"
     >
@@ -277,14 +277,14 @@ export default class FormItemComponent extends Vue {
   }
 
   get actualMin(): number | undefined {
-    if (this.subtype === "percent") {
+    if (this.min === undefined && this.subtype === "percent") {
       return 0;
     }
     return this.min;
   }
 
   get actualMax(): number | undefined {
-    if (this.subtype === "percent") {
+    if (this.max === undefined && this.subtype === "percent") {
       return 1;
     }
     return this.max;
@@ -322,6 +322,7 @@ export default class FormItemComponent extends Vue {
 
   onRangeChanged(): void {
     if (typeof this.model === "object") {
+      debugger;
       const rangeModel = this.model as RangeModel;
       if (rangeModel.min !== undefined && rangeModel.max !== undefined) {
         rangeModel.val = (rangeModel.min + rangeModel.max) / 2;

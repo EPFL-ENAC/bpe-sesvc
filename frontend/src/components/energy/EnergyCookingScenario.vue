@@ -134,6 +134,8 @@ export default class EnergyCookingScenario extends Vue {
         key: "discountRate",
         label: "Discount Rate",
         subtype: "percent",
+        min: -1, // -100%
+        max: 1, // +100%
         isTemplate: this.isTemplate,
       },
       {
@@ -141,6 +143,8 @@ export default class EnergyCookingScenario extends Vue {
         key: "incomeRate",
         label: "Average Income Rate per household",
         subtype: "percent",
+        min: -1, // -100%
+        max: 1, // +1000%
         isTemplate: this.isTemplate,
       },
       {
@@ -148,6 +152,8 @@ export default class EnergyCookingScenario extends Vue {
         key: "demographicGrowth",
         label: "Growth rate of the population",
         subtype: "percent",
+        min: -1, // -100%
+        max: 10, // +1000%
         isTemplate: this.isTemplate,
       },
     ];
