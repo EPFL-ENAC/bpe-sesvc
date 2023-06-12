@@ -1,25 +1,9 @@
 <template>
   <v-app>
-    <header class="justify-space-between align-center d-none d-print-flex">
-      <h4 class="font-weight-bold primary--text">
-        <span v-if="$route.name === 'ShelterSustainabilityCompare'"
-          >Shelter Comparison Report</span
-        >
-        <span v-else-if="currentRouteId">{{ currentRouteId }}</span>
-      </h4>
-      <figure>
-        <img
-          :src="unhcr_logo.imgPath"
-          :height="unhcr_logo.height || '40px'"
-          alt="UNHCR LOGO"
-        />
-      </figure>
-    </header>
     <hr
       class="d-none d-print-flex font-weight-bold justify-space-between align-center primary"
     />
     <v-app-bar app dense>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-tabs>
         <v-tab
           v-if="rootRoute"
@@ -29,26 +13,6 @@
           <span v-if="currentRouteId">: {{ currentRouteId }}</span>
         </v-tab>
       </v-tabs>
-      <v-spacer />
-      <v-menu v-if="$router.currentRoute.name?.includes('Shelter')" offset-y>
-        <template #activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" aria-label="shelter-help" v-on="on">
-            <v-icon> $mdiHelpCircleOutline </v-icon>
-          </v-btn>
-        </template>
-        <v-list class="helper-menu">
-          <v-list-item
-            v-for="(item, index) in shelterHelpers"
-            :key="index"
-            @click="setHelper(item)"
-          >
-            <v-list-item-action>
-              <v-icon>${{ item.icon }}</v-icon></v-list-item-action
-            >
-            <v-list-item-content>{{ item.title }}</v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
 
       <v-btn
         icon
@@ -118,48 +82,20 @@
             >
           </v-btn>
         </v-list-item>
-        <v-list-item link :to="{ name: 'Apps' }">
+        <v-list-item link :to="{ name: 'Home' }">
           <v-list-item-icon>
-            <v-icon color="light"> $mdiBriefcase </v-icon>
+            <v-icon color="light"> $mdiHome </v-icon>
           </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title>Apps</v-list-item-title>
+            <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item
-          v-for="(app, i) in apps"
-          :key="i"
-          link
-          :to="{ name: app.to }"
-        >
-          <v-list-item-icon @click.stop>
-            <v-img
-              v-if="app.logoSvg"
-              max-width="24px"
-              :src="app.logoSvg"
-            ></v-img>
-            <v-icon v-if="app.logoIcon">
-              {{ app.logoIcon }}
-            </v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            {{ app.title }}
-          </v-list-item-title>
-        </v-list-item>
-        <v-list-item link :to="{ name: 'About' }">
+        <v-list-item v-if="$userIs('LoggedIn')" link :to="{ name: 'About' }">
           <v-list-item-icon>
             <v-icon> $mdiInformation </v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>About</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item v-if="$userIs('LoggedOut')" @click="login">
-          <v-list-item-icon>
-            <v-icon> $mdiLogin </v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>Login</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item v-if="$userIs('LoggedIn')" @click="logout">
@@ -171,7 +107,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item>
+        <v-list-item v-if="$userIs('LoggedIn')">
           <v-list-item-icon>
             <v-btn
               v-if="notificationsLength"
@@ -190,6 +126,7 @@
                 <v-icon> $mdiBellOutline </v-icon>
               </v-badge>
             </v-btn>
+            <v-icon v-else> $mdiBellOutline </v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>Notifications </v-list-item-title>
@@ -218,7 +155,6 @@
 
     <v-main v-else class="unhcr-main">
       <reference-data />
-      <overview-data />
       <notification-center />
       <helper-center />
       <v-fade-transition mode="out-in">
@@ -255,7 +191,6 @@
 </template>
 
 <script lang="ts">
-import { unhcr_logo } from "@/components/commons/logos";
 import HelperCenter from "@/components/HelperCenter.vue";
 import LoginComponent from "@/components/LoginComponent.vue";
 import NotificationCenter from "@/components/NotificationCenter.vue";
@@ -315,7 +250,7 @@ export default class App extends Vue {
   refreshToken!: () => AxiosPromise;
   user!: CouchUser;
   md5Function: (v: string) => string = md5;
-  title = "BPE SESVC"; // use env variable,
+  title = "SESVC"; // use env variable,
   /** Drawer menu visibility */
   drawer = true;
   mini = true;
@@ -323,7 +258,6 @@ export default class App extends Vue {
   snackbar = false;
   // TODO: use meta.title for apps name
   apps = Apps;
-  unhcr_logo = unhcr_logo;
   intervalId!: number;
 
   rootRoute = {} as RouteRecordPublic;

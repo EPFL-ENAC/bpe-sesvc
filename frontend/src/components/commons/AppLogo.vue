@@ -18,7 +18,6 @@
       </v-sheet>
     </div>
     <div class="logos-container align-center">
-      <span>EPFL contributing labs and centers:</span>
       <v-sheet
         v-for="(logo, $key) in labLogos"
         :key="$key"
@@ -26,12 +25,19 @@
         max-width="170"
         min-width="150"
       >
-        <a :href="logo.urlDescription" target="_blank" :aria-label="logo.label">
+        <a
+          :href="logo.urlDescription"
+          target="_blank"
+          :aria-label="logo.label"
+          class="text-center text-decoration-none red--text"
+        >
           <v-img
+            v-if="logo.imgPath"
             :height="logo.height || '100px'"
             contain
             :src="logo.imgPath"
           ></v-img>
+          <h2 v-else>{{ logo.label }}</h2>
         </a>
       </v-sheet>
     </div>

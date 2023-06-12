@@ -19,7 +19,6 @@
           >
             <v-list-item three-line>
               <v-list-item-content>
-                <div class="text-overline mb-4">UNHCR</div>
                 <v-list-item-title class="text-h5 mb-1">
                   {{ app.title }}
                 </v-list-item-title>

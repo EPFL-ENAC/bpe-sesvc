@@ -26,11 +26,11 @@ const routes: Array<RouteConfig> = [
     redirect: "/login",
   },
   {
-    path: "/apps",
-    name: "Apps",
+    path: "/home",
+    name: "Home",
     component: Apps,
     meta: {
-      title: "BPE SESVC",
+      title: "Sustainable Energy Strategies for Vulnerable Communities",
     },
   },
   {

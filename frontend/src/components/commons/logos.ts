@@ -1,39 +1,15 @@
-export const unhcr_logo = {
-  imgPath: "/app_logo_new/Logo_UNHCR.png",
-  label: "Logo_UNHCR",
-  urlDescription:
-    "https://www.unhcr.org/publications/brochures/6229f4184/geneva-technical-hub-brochure.html",
-};
+export const logos = [];
 
-export const logos = [
+export const labLogos = [
   {
-    imgPath: "/app_logo_new/sdc_2.png",
-    label: "geneva technical hub brochure",
-    urlDescription:
-      "https://www.unhcr.org/publications/brochures/6229f4184/geneva-technical-hub-brochure.html",
+    label: "Edgard Gnansounou",
+    urlDescription: "mailto:edgard.gnansounou@epfl.ch",
   },
-
-  {
-    imgPath: "/app_logo_new/geneva_tech_hub.png",
-    label: "geneva_tech_hub",
-    urlDescription:
-      "https://www.unhcr.org/publications/brochures/6229f4184/geneva-technical-hub-brochure.html",
-  },
-  unhcr_logo,
-
   {
     imgPath: "/app_logo_new/EPFL.png",
     label: "EPFL",
     urlDescription: "https://epfl.ch",
     height: "30px",
-  },
-];
-
-export const labLogos = [
-  {
-    imgPath: "/app_logo_new/EssentialTech_Logo_5.png",
-    label: "essential tech",
-    urlDescription: "https://essentialtech.center/hth/",
   },
   {
     imgPath: "/app_logo_new/enac-it4r.png",
