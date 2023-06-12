@@ -2,6 +2,7 @@ export const logos = [];
 
 export const labLogos = [
   {
+    // imgPath: "/app_logo_new/gnasounougroup1.jpg",
     label: "Edgard Gnansounou",
     urlDescription: "mailto:edgard.gnansounou@epfl.ch",
   },

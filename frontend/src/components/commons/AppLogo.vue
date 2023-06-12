@@ -37,7 +37,7 @@
             contain
             :src="logo.imgPath"
           ></v-img>
-          <h2 v-else>{{ logo.label }}</h2>
+          <h3 v-else>{{ logo.label }}</h3>
         </a>
       </v-sheet>
     </div>
