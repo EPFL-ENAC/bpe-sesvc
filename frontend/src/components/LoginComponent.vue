@@ -138,7 +138,7 @@ export default class LoginComponent extends Vue {
 
   public get destinationRouteName(): string {
     const currentRouteName = this.$router.currentRoute.name as string;
-    return currentRouteName === "Login" ? "Apps" : currentRouteName;
+    return currentRouteName === "Login" ? "Home" : currentRouteName;
   }
   loginGuest(): void {
     this.username = "";
