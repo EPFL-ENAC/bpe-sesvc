@@ -296,40 +296,40 @@ export default class EnergyProject extends Vue {
           icon: "$mdiStove",
           toName: "Cooking",
         },
-        {
-          text: "Lighting",
-          icon: "$mdiLightbulb",
-          toName: "Lighting",
-        },
-        {
-          text: "Heating & Cooling",
-          icon: "$mdiSunSnowflake",
-          toName: "Heating",
-        },
+        // {
+        //   text: "Lighting",
+        //   icon: "$mdiLightbulb",
+        //   toName: "Lighting",
+        // },
+        // {
+        //   text: "Heating & Cooling",
+        //   icon: "$mdiSunSnowflake",
+        //   toName: "Heating",
+        // },
       ],
     },
-    {
-      text: "Community",
-      icon: "$mdiHomeCity",
-      toName: "Community",
-      children: [
-        {
-          text: "Lighting",
-          icon: "$mdiLightbulb",
-          toName: "Lighting",
-        },
-        {
-          text: "Heating & Cooling",
-          icon: "$mdiSunSnowflake",
-          toName: "Heating",
-        },
-        {
-          text: "Goods & Services",
-          icon: "$mdiRoomService",
-          toName: "Services",
-        },
-      ],
-    },
+    // {
+    //   text: "Community",
+    //   icon: "$mdiHomeCity",
+    //   toName: "Community",
+    //   children: [
+    //     {
+    //       text: "Lighting",
+    //       icon: "$mdiLightbulb",
+    //       toName: "Lighting",
+    //     },
+    //     {
+    //       text: "Heating & Cooling",
+    //       icon: "$mdiSunSnowflake",
+    //       toName: "Heating",
+    //     },
+    //     {
+    //       text: "Goods & Services",
+    //       icon: "$mdiRoomService",
+    //       toName: "Services",
+    //     },
+    //   ],
+    // },
     {},
     {
       text: "Summary",

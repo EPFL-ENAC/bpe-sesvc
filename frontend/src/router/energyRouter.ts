@@ -59,59 +59,59 @@ function projectChildren(prefix: string): RouteConfig[] {
               /* webpackChunkName: "energy-household-cooking" */ "../views/energy/EnergyHouseholdCookingView.vue"
             ),
         },
-        {
-          path: "lighting",
-          name: prefix + "HouseholdLighting",
-          component: () =>
-            import(
-              /* webpackChunkName: "energy-household-lighting" */ "../views/energy/EnergyHouseholdLightingView.vue"
-            ),
-        },
-        {
-          path: "heating",
-          name: prefix + "HouseholdHeating",
-          component: () =>
-            import(
-              /* webpackChunkName: "energy-household-heating" */ "../views/energy/EnergyHouseholdHeatingView.vue"
-            ),
-        },
+        // {
+        //   path: "lighting",
+        //   name: prefix + "HouseholdLighting",
+        //   component: () =>
+        //     import(
+        //       /* webpackChunkName: "energy-household-lighting" */ "../views/energy/EnergyHouseholdLightingView.vue"
+        //     ),
+        // },
+        // {
+        //   path: "heating",
+        //   name: prefix + "HouseholdHeating",
+        //   component: () =>
+        //     import(
+        //       /* webpackChunkName: "energy-household-heating" */ "../views/energy/EnergyHouseholdHeatingView.vue"
+        //     ),
+        // },
       ],
     },
-    {
-      path: "community",
-      name: prefix + "Community",
-      redirect: { name: prefix + "CommunityLighting" },
-      component: () =>
-        import(
-          /* webpackChunkName: "energy-community" */ "../views/energy/EnergyCommunityView.vue"
-        ),
-      children: [
-        {
-          path: "lighting",
-          name: prefix + "CommunityLighting",
-          component: () =>
-            import(
-              /* webpackChunkName: "energy-community-lighting" */ "../views/energy/EnergyCommunityLightingView.vue"
-            ),
-        },
-        {
-          path: "heating",
-          name: prefix + "CommunityHeating",
-          component: () =>
-            import(
-              /* webpackChunkName: "energy-community-heating" */ "../views/energy/EnergyCommunityHeatingView.vue"
-            ),
-        },
-        {
-          path: "services",
-          name: prefix + "CommunityServices",
-          component: () =>
-            import(
-              /* webpackChunkName: "energy-community-services" */ "../views/energy/EnergyCommunityServicesView.vue"
-            ),
-        },
-      ],
-    },
+    // {
+    //   path: "community",
+    //   name: prefix + "Community",
+    //   redirect: { name: prefix + "CommunityLighting" },
+    //   component: () =>
+    //     import(
+    //       /* webpackChunkName: "energy-community" */ "../views/energy/EnergyCommunityView.vue"
+    //     ),
+    //   children: [
+    //     {
+    //       path: "lighting",
+    //       name: prefix + "CommunityLighting",
+    //       component: () =>
+    //         import(
+    //           /* webpackChunkName: "energy-community-lighting" */ "../views/energy/EnergyCommunityLightingView.vue"
+    //         ),
+    //     },
+    //     {
+    //       path: "heating",
+    //       name: prefix + "CommunityHeating",
+    //       component: () =>
+    //         import(
+    //           /* webpackChunkName: "energy-community-heating" */ "../views/energy/EnergyCommunityHeatingView.vue"
+    //         ),
+    //     },
+    //     {
+    //       path: "services",
+    //       name: prefix + "CommunityServices",
+    //       component: () =>
+    //         import(
+    //           /* webpackChunkName: "energy-community-services" */ "../views/energy/EnergyCommunityServicesView.vue"
+    //         ),
+    //     },
+    //   ],
+    // },
     {
       path: "scenario",
       name: prefix + "Scenario",
