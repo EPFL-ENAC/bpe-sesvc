@@ -202,7 +202,7 @@ export default class EnergyCookingIntervention extends Vue {
         type: "select",
         key: "oldStoveIds",
         label: "Technologies to replace",
-        options: this.traditionalStoveIdOptions,
+        options: this.conventionalStoveIdOptions,
         multiple: true,
       } as FormItem<keyof CookingTechnologyIntervention, CookingStoveId>,
       {
@@ -243,36 +243,28 @@ export default class EnergyCookingIntervention extends Vue {
   }
 
   get stoveIdOptions(): SelectOption<CookingStoveId>[] {
-    return this.cookingStoves.map((stove) => ({
-      text: `${stove.name} - ${getCookingFuel(this.cookingFuels, stove).name}`,
-      value: stove._id,
-    }));
+    return this.toStoveIdOptions(this.cookingStoves);
   }
 
   get improvedStoveIdOptions(): SelectOption<CookingStoveId>[] {
-    return this.cookingStoves
-      .filter((stove) => stove.name.toLowerCase().startsWith("improved"))
-      .map((stove) => ({
-        text: `${stove.name} - ${
-          getCookingFuel(this.cookingFuels, stove).name
-        }`,
-        value: stove._id,
-      }));
+    return this.toStoveIdOptions(
+      this.cookingStoves.filter((stove) => stove.technologyType === "improved")
+    );
   }
 
-  get traditionalStoveIdOptions(): SelectOption<CookingStoveId>[] {
-    return this.cookingStoves
-      .filter(
-        (stove) =>
-          ["wood", "charcoal"].includes(stove.fuel) &&
-          !stove.name.toLowerCase().startsWith("improved")
+  get conventionalStoveIdOptions(): SelectOption<CookingStoveId>[] {
+    return this.toStoveIdOptions(
+      this.cookingStoves.filter(
+        (stove) => stove.technologyType === "conventional"
       )
-      .map((stove) => ({
-        text: `${stove.name} - ${
-          getCookingFuel(this.cookingFuels, stove).name
-        }`,
-        value: stove._id,
-      }));
+    );
+  }
+
+  toStoveIdOptions(stoves: CookingStove[]): SelectOption<CookingStoveId>[] {
+    return stoves.map((stove) => ({
+      text: `${stove.name} - ${getCookingFuel(this.cookingFuels, stove).name}`,
+      value: stove._id,
+    }));
   }
 
   get categoryOptions(): SelectOption<SocioEconomicCategory>[] {
