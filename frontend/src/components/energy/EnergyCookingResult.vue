@@ -1240,6 +1240,7 @@ class CookingCashAction extends Action {
   }
 
   apply(site: Site): Site {
+    // TODO
     return site;
   }
 }

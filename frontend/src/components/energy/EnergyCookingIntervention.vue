@@ -19,8 +19,8 @@
     <v-col cols="12">
       <energy-cooking-intervention-item
         v-model="module.efficiencyInterventions"
-        :form-items="technologyFormItems"
-        :default-item="technologyDefaultItem"
+        :form-items="technologyEfficiencyFormItems"
+        :default-item="technologyEfficiencyDefaultItem"
       >
         <template #title>
           Energy efficiency improvement
@@ -104,6 +104,21 @@ export default class EnergyCookingIntervention extends Vue {
     };
   }
 
+  get technologyEfficiencyDefaultItem(): CookingTechnologyIntervention {
+    const currentYear = getCurrentYear();
+    return {
+      type: "cooking-technology",
+      name: "New intervention",
+      selected: false,
+      yearStart: currentYear,
+      yearEnd: currentYear,
+      newStoveId: "lpg",
+      oldStoveIds: [],
+      categories: socioEconomicCategories,
+      count: 0,
+    };
+  }
+
   get cashDefaultItem(): CookingCashIntervention {
     const currentYear = getCurrentYear();
     return {
@@ -172,6 +187,41 @@ export default class EnergyCookingIntervention extends Vue {
     ];
   }
 
+  get technologyEfficiencyFormItems(): FormItem<
+    keyof CookingTechnologyIntervention
+  >[] {
+    return [
+      ...this.formItems,
+      {
+        type: "select",
+        key: "newStoveId",
+        label: "New cooker to diffuse",
+        options: this.improvedStoveIdOptions,
+      } as FormItem<keyof CookingTechnologyIntervention, CookingStoveId>,
+      {
+        type: "select",
+        key: "oldStoveIds",
+        label: "Technologies to replace",
+        options: this.traditionalStoveIdOptions,
+        multiple: true,
+      } as FormItem<keyof CookingTechnologyIntervention, CookingStoveId>,
+      {
+        type: "select",
+        key: "categories",
+        label: "Targeted quality of life levels",
+        options: this.categoryOptions,
+        multiple: true,
+      } as FormItem<keyof CookingTechnologyIntervention, SocioEconomicCategory>,
+      {
+        type: "number",
+        key: "count",
+        label:
+          "Objectives of number of conventional or improved cooking count per 10-household of each targeted QLL each intervention year",
+        ratio: 10,
+      },
+    ];
+  }
+
   get cashFormItems(): FormItem<keyof CookingCashIntervention>[] {
     return [
       ...this.formItems,
@@ -197,6 +247,32 @@ export default class EnergyCookingIntervention extends Vue {
       text: `${stove.name} - ${getCookingFuel(this.cookingFuels, stove).name}`,
       value: stove._id,
     }));
+  }
+
+  get improvedStoveIdOptions(): SelectOption<CookingStoveId>[] {
+    return this.cookingStoves
+      .filter((stove) => stove.name.toLowerCase().startsWith("improved"))
+      .map((stove) => ({
+        text: `${stove.name} - ${
+          getCookingFuel(this.cookingFuels, stove).name
+        }`,
+        value: stove._id,
+      }));
+  }
+
+  get traditionalStoveIdOptions(): SelectOption<CookingStoveId>[] {
+    return this.cookingStoves
+      .filter(
+        (stove) =>
+          ["wood", "charcoal"].includes(stove.fuel) &&
+          !stove.name.toLowerCase().startsWith("improved")
+      )
+      .map((stove) => ({
+        text: `${stove.name} - ${
+          getCookingFuel(this.cookingFuels, stove).name
+        }`,
+        value: stove._id,
+      }));
   }
 
   get categoryOptions(): SelectOption<SocioEconomicCategory>[] {
