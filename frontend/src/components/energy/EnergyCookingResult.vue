@@ -97,6 +97,12 @@
                 :y-labels="['Income [$]']"
               ></energy-chart>
               <energy-chart
+                title="Donor expenditures"
+                :years="years"
+                :items="donorExpenditures"
+                :y-labels="['Donor expenditures [$]']"
+              ></energy-chart>
+              <energy-chart
                 title="Cost"
                 :years="years"
                 :items="cost"
@@ -362,6 +368,11 @@ export default class EnergyCookingResult extends Vue {
         unit: "$",
       },
       {
+        text: "Donor expenditures",
+        key: "donorExpenditures",
+        unit: "$",
+      },
+      {
         text: "Wood weight",
         key: "woodWeight",
         unit: "kg",
@@ -462,6 +473,12 @@ export default class EnergyCookingResult extends Vue {
 
   get income(): ChartItem[] {
     return this.getDetailChartItems("bar", "income", {
+      unit: "$",
+    });
+  }
+
+  get donorExpenditures(): ChartItem[] {
+    return this.getDetailChartItems("bar", "donorExpenditures", {
       unit: "$",
     });
   }
@@ -567,6 +584,9 @@ export default class EnergyCookingResult extends Vue {
       .value();
     const income = chain(results)
       .sumBy((r) => r.categoryTotal.income)
+      .value();
+    const donorExpenditures = chain(results)
+      .sumBy((r) => r.categoryTotal.donorExpenditures)
       .value();
     return {
       energy: finalEnergy / households,
@@ -730,8 +750,12 @@ export default class EnergyCookingResult extends Vue {
           currentSite.populationCount / currentSite.householdSize;
         currentSite.proportions = this.getNewProportions(previousSite);
         currentSite = actions
-          .filter((action) => action.isActive(year))
-          .reduce((site, action) => action.apply(site), currentSite);
+          .filter((action) => action.isActive(year) || action.isEnded(year))
+          .reduce(
+            (site, action) =>
+              action.isActive(year) ? action.apply(site) : action.unapply(site),
+            currentSite
+          );
         sites[index] = currentSite;
       }
       return sites;
@@ -945,11 +969,24 @@ export default class EnergyCookingResult extends Vue {
       income: input.general.annualIncome,
     };
     // Cafford
-    const costAffordability =
-      householdResult.totalCost / householdResult.income;
+    let costAffordability =
+      householdResult.totalCost === 0
+        ? 0
+        : householdResult.totalCost / householdResult.income;
+    let donorExpenditures = 0;
+    if (
+      input.costAffordabilityObjective &&
+      costAffordability > input.costAffordabilityObjective
+    ) {
+      donorExpenditures =
+        householdResult.totalCost -
+        householdResult.income * input.costAffordabilityObjective;
+      costAffordability = input.costAffordabilityObjective;
+    }
     return {
       ...householdResult,
       costAffordability,
+      donorExpenditures,
     };
   }
 
@@ -977,7 +1014,8 @@ export default class EnergyCookingResult extends Vue {
       populationCount: site.populationCount * proportion,
       energyEfficiency: energyEfficiency * 100,
       discountedCost,
-      costAffordability: householdResult.costAffordability * 100,
+      costAffordability:
+        householdCount === 0 ? 0 : householdResult.costAffordability * 100,
     };
   }
 
@@ -1175,6 +1213,7 @@ interface Site {
 interface CategoryInput {
   general: GeneralCategory;
   cookingTechnologies: CookingTechnology[];
+  costAffordabilityObjective: number | undefined;
 }
 interface CookingTechnology {
   stove: CookingStove;
@@ -1189,7 +1228,15 @@ abstract class Action {
     return this.yearStart <= year && year <= this.yearEnd;
   }
 
+  isEnded(year: number): boolean {
+    return year > this.yearEnd;
+  }
+
+  // apply action, when action is active
   abstract apply(site: Site): Site;
+
+  // unapply action, when action is ended, for the case it is not a permanent intervention
+  abstract unapply(site: Site): Site;
 }
 
 class CookingTechnologyAction extends Action {
@@ -1219,6 +1266,10 @@ class CookingTechnologyAction extends Action {
     return site;
   }
 
+  unapply(site: Site): Site {
+    return site;
+  }
+
   private getStove(
     input: CategoryInput,
     id: CookingStoveId
@@ -1235,12 +1286,23 @@ class CookingTechnologyAction extends Action {
 }
 
 class CookingCashAction extends Action {
-  constructor(intervention: CookingCashIntervention) {
+  constructor(private intervention: CookingCashIntervention) {
     super(intervention.yearStart, intervention.yearEnd);
   }
 
   apply(site: Site): Site {
-    // TODO
+    for (const category of this.intervention.categories) {
+      const input = site.categories[category];
+      input.costAffordabilityObjective = this.intervention.costAffordability;
+    }
+    return site;
+  }
+
+  unapply(site: Site): Site {
+    for (const category of this.intervention.categories) {
+      const input = site.categories[category];
+      input.costAffordabilityObjective = undefined;
+    }
     return site;
   }
 }
@@ -1260,6 +1322,7 @@ type HouseholdResult = Record<CookingStoveId, number | undefined> & {
   variableCost: number;
   totalCost: number;
   costAffordability: number;
+  donorExpenditures: number;
 };
 
 interface CategoryResult extends HouseholdResult {
