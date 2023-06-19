@@ -917,9 +917,12 @@ export default class EnergyCookingResult extends Vue {
       const emissionCo = usefulEnergy * technology.stove.emissionFactorCo;
       const emissionPm = usefulEnergy * technology.stove.emissionFactorPm;
       const fixedCost =
-        (site.discountRate /
-          (1 - Math.pow(1 + site.discountRate, -technology.stove.lifetime))) *
-        technology.stove.investmentCost;
+        site.discountRate === 0
+          ? 0
+          : (site.discountRate /
+              (1 -
+                Math.pow(1 + site.discountRate, -technology.stove.lifetime))) *
+            technology.stove.investmentCost;
       const variableCost =
         fuelWeight *
         technology.fuel.price *
