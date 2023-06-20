@@ -23,11 +23,11 @@ Vue.use(filters);
 Vue.component("CountryFlag", CountryFlag);
 
 axios.interceptors.response.use(undefined, function (error: AxiosError) {
-  (error as any).originalMessage = error.message;
+  const originalMessage = error.message;
   Object.defineProperty(error, "message", {
     get: function () {
       if (!error.response) {
-        return (error as any).originalMessage;
+        return originalMessage;
       }
       return `${error?.response?.status}: ${error?.response?.statusText}`;
     },
@@ -35,7 +35,7 @@ axios.interceptors.response.use(undefined, function (error: AxiosError) {
   Object.defineProperty(error, "stack", {
     get: function () {
       if (!error.response) {
-        return (error as any).originalMessage;
+        return originalMessage;
       }
       return `${JSON.stringify(error.response.data)}`;
     },

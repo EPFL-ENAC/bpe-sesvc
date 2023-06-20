@@ -1,7 +1,7 @@
 import { ExistingDocument } from "@/models/couchdbModel";
 // import store from "@/store";
 import { SessionStorageKey } from "@/utils/storage";
-import axios, { AxiosError, AxiosPromise, AxiosResponse } from "axios";
+import axios, { AxiosPromise, AxiosResponse } from "axios";
 import { JwtPayload } from "jsonwebtoken";
 import PouchDB from "pouchdb";
 import qs from "qs";
@@ -98,7 +98,7 @@ export async function loginJWT(token: string): Promise<AxiosResponse> {
         `Authentication failed: JWT authentication should be enabled on Database; restart database with proper config`
       );
     }
-  } catch (error: AxiosError | unknown) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       // 401 Unauthorized or other
       // {"error":"unauthorized","reason":"exp not in future"}
