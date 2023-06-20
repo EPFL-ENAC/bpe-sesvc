@@ -595,6 +595,7 @@ export default class EnergyCookingResult extends Vue {
       woodArea: maxWoodArea,
       discountedCost,
       affordability: (totalCost / income) * 100,
+      donorExpenditures,
     };
   }
 
@@ -1350,6 +1351,7 @@ interface GlobalResult {
   woodArea: number;
   discountedCost: number;
   affordability: number;
+  donorExpenditures: number;
 }
 </script>
 

@@ -1,7 +1,6 @@
 import { themeColor } from "@/plugins/vuetify";
 import ConfigModule from "@/store/ConfigModule";
 import EnergyModule from "@/store/EnergyModule";
-import UNHCRLocation from "@/store/UNHCRLocation";
 import UserModule from "@/store/UserModule";
 import { throttle } from "lodash";
 import Vue from "vue";
@@ -279,7 +278,6 @@ const store: StoreOptions<RootState> = {
   actions,
   modules: {
     ConfigModule,
-    UNHCRLocation,
     UserModule,
     energy: EnergyModule,
   },

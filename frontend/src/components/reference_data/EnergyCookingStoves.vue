@@ -1,34 +1,15 @@
 <template>
   <div class="ma-3">
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>Stoves</v-card-title>
-          <v-card-text>
-            <v-data-table :headers="stoveHeaders" :items="stoves">
-              <template #[`item.energyEfficiency`]="{ item }">
-                {{ item.energyEfficiency * 100 }}
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-card>
-          <v-card-title>Fuels</v-card-title>
-          <v-card-text>
-            <v-data-table :headers="fuelHeaders" :items="fuels"></v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-data-table :headers="stoveHeaders" :items="stoves">
+      <template #[`item.energyEfficiency`]="{ item }">
+        {{ item.energyEfficiency * 100 }}
+      </template>
+    </v-data-table>
   </div>
 </template>
 
 <script lang="ts">
-import { CookingFuel, CookingStove } from "@/models/energyModel";
+import { CookingStove } from "@/models/energyModel";
 import { DatabaseName, SyncDatabase } from "@/utils/couchdb";
 import "vue-class-component/hooks";
 import { Component, Vue } from "vue-property-decorator";
@@ -90,32 +71,8 @@ export default class EnergyCooking extends Vue {
       },
     ] as TableHeader<keyof CookingStove>[]
   ).map(this.mapHeader);
-  readonly fuelHeaders: TableHeader<keyof CookingFuel>[] = (
-    [
-      {
-        text: "Name",
-        value: "name",
-      },
-      {
-        text: "Name",
-        value: "energy",
-        unit: "MJ/kg",
-      },
-      {
-        text: "Emission factor for CO2",
-        value: "emissionFactorCo2",
-        unit: "kg/kg of fuel",
-      },
-      {
-        text: "Price",
-        value: "price",
-        unit: "$/kg",
-      },
-    ] as TableHeader<keyof CookingFuel>[]
-  ).map(this.mapHeader);
 
   stoves: CookingStove[] = [];
-  fuels: CookingFuel[] = [];
 
   created(): void {
     const stovesDatabase = new SyncDatabase<CookingStove>(
@@ -125,14 +82,6 @@ export default class EnergyCooking extends Vue {
       .getAllDocuments()
       .then((documents) => (this.stoves = documents))
       .finally(() => stovesDatabase.cancel());
-
-    const fuelsDatabase = new SyncDatabase<CookingFuel>(
-      DatabaseName.EnergyCookingFuels
-    );
-    fuelsDatabase
-      .getAllDocuments()
-      .then((documents) => (this.fuels = documents))
-      .finally(() => fuelsDatabase.cancel());
   }
 
   mapHeader<V extends string>(header: TableHeader<V>): TableHeader<V> {
