@@ -181,7 +181,7 @@ export default class EnergyCookingIntervention extends Vue {
         type: "number",
         key: "count",
         label:
-          "Objectives of number of conventional or improved cooking count per 10-household of each targeted QLL each intervention year",
+          "Objectives of number of conventional or improved cooking count per 10-household of each targeted QLL at the last year of intervention",
         ratio: 10,
       },
     ];
@@ -216,7 +216,7 @@ export default class EnergyCookingIntervention extends Vue {
         type: "number",
         key: "count",
         label:
-          "Objectives of number of conventional or improved cooking count per 10-household of each targeted QLL each intervention year",
+          "Objectives of number of conventional or improved cooking count per 10-household of each targeted QLL at the last year of intervention",
         ratio: 10,
       },
     ];

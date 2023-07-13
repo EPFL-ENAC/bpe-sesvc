@@ -754,7 +754,9 @@ export default class EnergyCookingResult extends Vue {
           .filter((action) => action.isActive(year) || action.isEnded(year))
           .reduce(
             (site, action) =>
-              action.isActive(year) ? action.apply(site) : action.unapply(site),
+              action.isActive(year)
+                ? action.apply(site, year)
+                : action.unapply(site, year),
             currentSite
           );
         sites[index] = currentSite;
@@ -1226,7 +1228,7 @@ interface CookingTechnology {
 }
 
 abstract class Action {
-  constructor(private yearStart: number, private yearEnd: number) {}
+  constructor(protected yearStart: number, protected yearEnd: number) {}
 
   isActive(year: number): boolean {
     return this.yearStart <= year && year <= this.yearEnd;
@@ -1237,10 +1239,10 @@ abstract class Action {
   }
 
   // apply action, when action is active
-  abstract apply(site: Site): Site;
+  abstract apply(site: Site, year: number): Site;
 
   // unapply action, when action is ended, for the case it is not a permanent intervention
-  abstract unapply(site: Site): Site;
+  abstract unapply(site: Site, year: number): Site;
 }
 
 class CookingTechnologyAction extends Action {
@@ -1248,22 +1250,45 @@ class CookingTechnologyAction extends Action {
     super(intervention.yearStart, intervention.yearEnd);
   }
 
-  apply(site: Site): Site {
+  // TODO: intervention does not end at yearEnd: the target must be reached at yearEnd and maintained afterwards
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  isEnded(year: number): boolean {
+    return false;
+  }
+
+  isActive(year: number): boolean {
+    return this.yearStart <= year;
+  }
+
+  apply(site: Site, year: number): Site {
     for (const category of this.intervention.categories) {
       const input = site.categories[category];
       const newStove = this.getStove(input, this.intervention.newStoveId);
-      let remainingCount = this.intervention.count;
-      remainingLoop: for (const item of this.intervention.oldStoveIds
-        .map((id) => this.getStove(input, id))
-        .filter((item) => item.countPerHousehold > 0)) {
-        const replaceCount = clamp(item.countPerHousehold, remainingCount);
-        remainingCount -= replaceCount;
-        const replacePerHousehold = replaceCount;
-        item.countPerHousehold = item.countPerHousehold - replacePerHousehold;
-        newStove.countPerHousehold =
-          newStove.countPerHousehold + replacePerHousehold;
-        if (remainingCount === 0) {
-          break remainingLoop;
+      // intervention count is the target at yearEnd, to be maintained.
+      // skip if target is reached
+      if (newStove.countPerHousehold < this.intervention.count) {
+        let remainingCount = this.intervention.count;
+        if (year < this.yearEnd) {
+          // intervention year window: calculate linear progression to reach target
+          remainingCount =
+            this.intervention.count / (this.yearEnd - this.yearStart + 1);
+        } else {
+          // after year end: maintain the target
+          remainingCount = this.intervention.count - newStove.countPerHousehold;
+        }
+        debugger;
+        remainingLoop: for (const item of this.intervention.oldStoveIds
+          .map((id) => this.getStove(input, id))
+          .filter((item) => item.countPerHousehold > 0)) {
+          const replaceCount = clamp(item.countPerHousehold, remainingCount);
+          remainingCount -= replaceCount;
+          const replacePerHousehold = replaceCount;
+          item.countPerHousehold = item.countPerHousehold - replacePerHousehold;
+          newStove.countPerHousehold =
+            newStove.countPerHousehold + replacePerHousehold;
+          if (remainingCount === 0) {
+            break remainingLoop;
+          }
         }
       }
     }
@@ -1294,7 +1319,8 @@ class CookingCashAction extends Action {
     super(intervention.yearStart, intervention.yearEnd);
   }
 
-  apply(site: Site): Site {
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  apply(site: Site, year: number): Site {
     for (const category of this.intervention.categories) {
       const input = site.categories[category];
       input.costAffordabilityObjective = this.intervention.costAffordability;
@@ -1302,7 +1328,8 @@ class CookingCashAction extends Action {
     return site;
   }
 
-  unapply(site: Site): Site {
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  unapply(site: Site, year: number): Site {
     for (const category of this.intervention.categories) {
       const input = site.categories[category];
       input.costAffordabilityObjective = undefined;
