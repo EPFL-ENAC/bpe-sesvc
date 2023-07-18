@@ -184,6 +184,12 @@
                                   v-for="cat in categories"
                                   :key="cat"
                                   class="text-right"
+                                  :title="
+                                    getTableRowTitle(
+                                      item,
+                                      siteResult.categories[cat]
+                                    )
+                                  "
                                 >
                                   {{
                                     siteResult.categories[cat][item.key] |
@@ -192,7 +198,15 @@
                                       })
                                   }}
                                 </td>
-                                <td class="font-weight-bold text-right">
+                                <td
+                                  class="font-weight-bold text-right"
+                                  :title="
+                                    getTableRowTitle(
+                                      item,
+                                      siteResult.categoryTotal
+                                    )
+                                  "
+                                >
                                   {{
                                     siteResult.categoryTotal[item.key] |
                                       formatNumber({
@@ -246,6 +260,7 @@ import {
   socioEconomicCategories,
   SocioEconomicCategory,
 } from "@/models/energyModel";
+import { formatNumber } from "@/plugins/filters";
 import { cccmColors } from "@/plugins/vuetify";
 import {
   applyMap,
@@ -336,11 +351,13 @@ export default class EnergyCookingResult extends Vue {
         text: "Useful Energy",
         key: "usefulEnergy",
         unit: "MJ",
+        title: true,
       },
       {
         text: "Final Energy",
         key: "finalEnergy",
         unit: "MJ",
+        title: true,
       },
       {
         text: "Energy Efficiency",
@@ -351,66 +368,79 @@ export default class EnergyCookingResult extends Vue {
         text: "CO2 Emission",
         key: "emissionCo2",
         unit: "kg",
+        title: true,
       },
       {
         text: "CO Emission",
         key: "emissionCo",
         unit: "g",
+        title: true,
       },
       {
         text: "Particles Emission",
         key: "emissionPm",
         unit: "mg",
+        title: true,
       },
       {
         text: "Income",
         key: "income",
         unit: "$",
+        title: true,
       },
       {
         text: "Donor expenditures",
         key: "donorExpenditures",
         unit: "$",
+        title: true,
       },
       {
         text: "Wood weight",
         key: "woodWeight",
         unit: "kg",
+        title: true,
       },
       {
         text: "Charcoal weight",
         key: "charcoalWeight",
         unit: "kg",
+        title: true,
       },
       {
         text: "Equivalent wood weight",
         key: "woodNeed",
         unit: "kg",
+        title: true,
       },
       {
         text: "Required biomass area for wood collection",
         key: "woodArea",
         unit: "ha",
+        title: true,
       },
       {
         text: "Fixed cost",
         key: "fixedCost",
         unit: "$",
+        title: true,
       },
       {
         text: "Variable cost",
         key: "variableCost",
         unit: "$",
+        title: true,
       },
       {
         text: "Total cost",
         key: "totalCost",
         unit: "$",
+        title: true,
       },
       {
         text: "Discounted cost",
         key: "discountedCost",
         unit: "$",
+        title: true,
       },
       {
         text: "Cost affordability",
@@ -425,6 +455,7 @@ export default class EnergyCookingResult extends Vue {
       text: `${cooking.stove.name} - ${cooking.fuel.name}`,
       key: cooking.stove._id,
       decimal: 2,
+      title: true,
     }));
     return [...results, ...stoves];
   }
@@ -557,6 +588,20 @@ export default class EnergyCookingResult extends Vue {
     return this.scenarioModule?.scenarios.find(
       (scn) => scn.id === this.scenarioModule?.selectedId
     );
+  }
+
+  getTableRowTitle(item: TableRow, result: CategoryResult): string {
+    if (item.title) {
+      const count = result[item.key] || 0;
+      const hh = result["householdCount"] || 0;
+      const unit = item.unit || "";
+      return count > 0 && hh > 0 && item.title
+        ? `${formatNumber((10 * count) / hh, {
+            maximumFractionDigits: item.decimal,
+          })} ${unit} per 10 households`
+        : "";
+    }
+    return "";
   }
 
   getGlobalResult(results: SiteResult[]): GlobalResult {
@@ -1195,6 +1240,7 @@ interface TableRow {
   key: keyof CategoryResult;
   unit?: string;
   decimal?: number;
+  title?: boolean;
 }
 
 /**
