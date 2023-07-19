@@ -1322,7 +1322,6 @@ class CookingTechnologyAction extends Action {
           // after year end: maintain the target
           remainingCount = this.intervention.count - newStove.countPerHousehold;
         }
-        debugger;
         remainingLoop: for (const item of this.intervention.oldStoveIds
           .map((id) => this.getStove(input, id))
           .filter((item) => item.countPerHousehold > 0)) {

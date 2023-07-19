@@ -322,7 +322,6 @@ export default class FormItemComponent extends Vue {
 
   onRangeChanged(): void {
     if (typeof this.model === "object") {
-      debugger;
       const rangeModel = this.model as RangeModel;
       if (rangeModel.min !== undefined && rangeModel.max !== undefined) {
         rangeModel.val = (rangeModel.min + rangeModel.max) / 2;

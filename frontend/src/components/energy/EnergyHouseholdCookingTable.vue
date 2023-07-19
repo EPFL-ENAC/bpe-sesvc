@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <v-card-title>
+  <v-card flat>
+    <v-card-title class="pl-0 pr-0">
       <span>Cooking Technologies</span>
       <div class="flex-grow-1 d-flex justify-end">
         <v-dialog v-model="detailDialog">
@@ -107,7 +107,7 @@
         </v-dialog>
       </div>
     </v-card-title>
-    <v-card-text>
+    <v-card-text class="pl-0 pr-0">
       <v-tabs v-model="yearTab">
         <v-tab v-for="year in years" :key="year">
           {{ year }}

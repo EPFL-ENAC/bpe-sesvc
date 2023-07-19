@@ -1,6 +1,6 @@
 <template>
-  <v-card height="100%">
-    <v-card-title>
+  <v-card height="100%" flat>
+    <v-card-title class="pl-0 pr-0">
       <slot name="title"></slot>
       <v-spacer></v-spacer>
       <v-btn class="float-right" color="primary" text @click="addItem">
@@ -8,7 +8,7 @@
         New intervention
       </v-btn>
     </v-card-title>
-    <v-card-text>
+    <v-card-text class="pl-0 pr-0">
       <v-expansion-panels multiple>
         <v-expansion-panel
           v-for="(interventionItem, index) in interventions"
