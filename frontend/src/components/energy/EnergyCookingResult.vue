@@ -157,7 +157,12 @@
                         :key="index"
                         :value="`${years[index]}`"
                       >
-                        <v-simple-table dense>
+                        <v-simple-table
+                          dense
+                          fixed-header
+                          height="800px"
+                          class="stripped"
+                        >
                           <template #default>
                             <thead>
                               <tr>
@@ -170,6 +175,21 @@
                                   {{ $t(`energy.${cat}`) }}
                                 </th>
                                 <th class="text-right">Total</th>
+                              </tr>
+                              <tr>
+                                <th></th>
+                                <th
+                                  v-for="cat in categories"
+                                  :key="cat"
+                                  class="text-right"
+                                >
+                                  N<br />
+                                  <small>[per 10 households]</small>
+                                </th>
+                                <th class="text-right">
+                                  N<br />
+                                  <small>[per 10 households]</small>
+                                </th>
                               </tr>
                             </thead>
                             <tbody>
@@ -184,35 +204,39 @@
                                   v-for="cat in categories"
                                   :key="cat"
                                   class="text-right"
-                                  :title="
-                                    getTableRowTitle(
+                                >
+                                  {{
+                                    getTableRowValue(
                                       item,
                                       siteResult.categories[cat]
                                     )
-                                  "
-                                >
-                                  {{
-                                    siteResult.categories[cat][item.key] |
-                                      formatNumber({
-                                        maximumFractionDigits: item.decimal,
-                                      })
                                   }}
+                                  <br />
+                                  <small>
+                                    {{
+                                      getTableRowValuePerHH(
+                                        item,
+                                        siteResult.categories[cat]
+                                      )
+                                    }}
+                                  </small>
                                 </td>
-                                <td
-                                  class="font-weight-bold text-right"
-                                  :title="
-                                    getTableRowTitle(
+                                <td class="font-weight-bold text-right">
+                                  {{
+                                    getTableRowValue(
                                       item,
                                       siteResult.categoryTotal
                                     )
-                                  "
-                                >
-                                  {{
-                                    siteResult.categoryTotal[item.key] |
-                                      formatNumber({
-                                        maximumFractionDigits: item.decimal,
-                                      })
                                   }}
+                                  <br />
+                                  <small>
+                                    {{
+                                      getTableRowValuePerHH(
+                                        item,
+                                        siteResult.categoryTotal
+                                      )
+                                    }}
+                                  </small>
                                 </td>
                               </tr>
                             </tbody>
@@ -590,15 +614,20 @@ export default class EnergyCookingResult extends Vue {
     );
   }
 
-  getTableRowTitle(item: TableRow, result: CategoryResult): string {
+  getTableRowValue(item: TableRow, result: CategoryResult): string {
+    return formatNumber(result[item.key] ?? 0, {
+      maximumFractionDigits: item.decimal,
+    });
+  }
+
+  getTableRowValuePerHH(item: TableRow, result: CategoryResult): string {
     if (item.title) {
       const count = result[item.key] || 0;
       const hh = result["householdCount"] || 0;
-      const unit = item.unit || "";
       return count > 0 && hh > 0 && item.title
-        ? `${formatNumber((10 * count) / hh, {
+        ? `[${formatNumber((10 * count) / hh, {
             maximumFractionDigits: item.decimal,
-          })} ${unit} per 10 households`
+          })}]`
         : "";
     }
     return "";
@@ -783,18 +812,24 @@ export default class EnergyCookingResult extends Vue {
             ])
           ) as Record<CookingFuelId, number>;
         }
+        currentSite.yearCount = index;
+        currentSite.populationCount =
+          previousSite.populationCount * (1 + currentSite.demographicGrowth);
+        currentSite.householdsCount =
+          currentSite.populationCount / currentSite.householdSize;
+        const { proportions, categories } =
+          this.getNewProportionsAndCategories(previousSite);
+        currentSite.proportions = proportions;
+        currentSite.categories = categories;
+
+        // case technologies are to be wedged, no matter what happened before
         const technologies = householdCooking.technologyYears.find(
           (item) => item.yearIndex === index
         )?.technologies;
         if (technologies) {
           currentSite.categories = this.getCategories(general, technologies);
         }
-        currentSite.yearCount = index;
-        currentSite.populationCount =
-          previousSite.populationCount * (1 + currentSite.demographicGrowth);
-        currentSite.householdsCount =
-          currentSite.populationCount / currentSite.householdSize;
-        currentSite.proportions = this.getNewProportions(previousSite);
+
         currentSite = actions
           .filter((action) => action.isActive(year) || action.isEnded(year))
           .reduce(
@@ -813,16 +848,22 @@ export default class EnergyCookingResult extends Vue {
   }
 
   /**
-   * Compute new proportions for the next year.
-   * Upgrade the categories by moving from a category to a better next one (from lowest to highest) until the target income is reached or everyone is in the best category.
+   * Compute new proportions and cooking technologies ratio for the next year.
+   * Upgrade the categories by moving from a category to a better next one (from lowest to highest)
+   * until the target income is reached or everyone is in the best category. The cooking devices follow
+   * this transfer of population.
    * Notes:
    * - if no income per category is defined, the proportions of the populations will fall down to 0.
    * - when the average income grows and as the income per category does not change, some populations of
    *   the lowest category is transferred to the next upper category (thus this new proportions caculation).
    *   See page 45 of "design of the new tool Cooking7.6.pdf".
    */
-  getNewProportions(site: Site): Record<SocioEconomicCategory, number> {
+  getNewProportionsAndCategories(site: Site): {
+    proportions: Record<SocioEconomicCategory, number>;
+    categories: Record<SocioEconomicCategory, CategoryInput>;
+  } {
     const proportions = cloneDeep(site.proportions);
+    const categories = cloneDeep(site.categories);
     const incomes = Object.fromEntries(
       socioEconomicCategories.map((cat) => [
         cat,
@@ -852,13 +893,42 @@ export default class EnergyCookingResult extends Vue {
         0,
         proportions[currentCat]
       );
+      // populations are transfered with their cooking devices
+      // - calculate the count of stoves for each type in the current cat that are transfered by applying the effectiveDelta
+      // - add this amount of transfered stoves to the next cat
+      // - calculate the new count per household of stoves in the next cat (current does not get modified)
+      const cookingTechnologiesTransferedCount = categories[
+        currentCat
+      ].cookingTechnologies.map((ct) => {
+        const transfered =
+          site.householdsCount * ct.value.countPerHousehold * effectiveDelta;
+        return transfered;
+      });
+
+      categories[nextCat].cookingTechnologies = categories[
+        nextCat
+      ].cookingTechnologies.map((ct, idx) => {
+        const transfered = cookingTechnologiesTransferedCount[idx];
+        const count =
+          site.householdsCount *
+            ct.value.countPerHousehold *
+            proportions[nextCat] +
+          transfered;
+        const countPerHousehold =
+          count /
+          ((proportions[nextCat] + effectiveDelta) * site.householdsCount);
+        ct.value.countPerHousehold = countPerHousehold;
+        return ct;
+      });
+
       proportions[currentCat] -= effectiveDelta;
       proportions[nextCat] += effectiveDelta;
+
       if (proportions[currentCat] > 0) {
         break;
       }
     }
-    return proportions;
+    return { proportions, categories };
   }
 
   getCategories(
@@ -1296,7 +1366,6 @@ class CookingTechnologyAction extends Action {
     super(intervention.yearStart, intervention.yearEnd);
   }
 
-  // TODO: intervention does not end at yearEnd: the target must be reached at yearEnd and maintained afterwards
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   isEnded(year: number): boolean {
     return false;
