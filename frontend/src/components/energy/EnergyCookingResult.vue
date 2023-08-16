@@ -142,6 +142,24 @@
                     </v-btn>
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
+                    <div class="d-inline-block">
+                      <v-checkbox v-model="withEnergy" label="Energy" />
+                    </div>
+                    <div class="d-inline-block ml-3">
+                      <v-checkbox v-model="withFinances" label="Finances" />
+                    </div>
+                    <div class="d-inline-block ml-3">
+                      <v-checkbox
+                        v-model="withStoves"
+                        label="Cooking Technologies"
+                      />
+                    </div>
+                    <div>
+                      <v-checkbox
+                        v-model="withCount10Households"
+                        label="Count per 10 households"
+                      />
+                    </div>
                     <v-tabs v-model="tab" center-active show-arrows>
                       <v-tab
                         v-for="item in years"
@@ -176,19 +194,19 @@
                                 </th>
                                 <th class="text-right">Total</th>
                               </tr>
-                              <tr>
+                              <tr v-if="withCount10Households">
                                 <th></th>
                                 <th
                                   v-for="cat in categories"
                                   :key="cat"
                                   class="text-right"
                                 >
-                                  N<br />
-                                  <small>[per 10 households]</small>
+                                  <div>N</div>
+                                  <div><small>[per 10 households]</small></div>
                                 </th>
                                 <th class="text-right">
-                                  N<br />
-                                  <small>[per 10 households]</small>
+                                  <div>N</div>
+                                  <div><small>[per 10 households]</small></div>
                                 </th>
                               </tr>
                             </thead>
@@ -356,7 +374,27 @@ export default class EnergyCookingResult extends Vue {
   tab: string | null = null;
   cookingFuels!: CookingFuel[];
 
+  withCount10Households = true;
+
+  withEnergy = true;
+  withFinances = true;
+  withStoves = true;
+
   get lines(): TableRow[] {
+    let results = [...this.populationResults];
+    if (this.withEnergy) {
+      results = [...results, ...this.energyResults];
+    }
+    if (this.withFinances) {
+      results = [...results, ...this.financialResults];
+    }
+    if (this.withStoves) {
+      results = [...results, ...this.stoves];
+    }
+    return results;
+  }
+
+  get populationResults(): TableRow[] {
     const results: TableRow[] = [
       {
         text: "Proportion",
@@ -371,17 +409,23 @@ export default class EnergyCookingResult extends Vue {
         text: "Population",
         key: "populationCount",
       },
+    ];
+    return results;
+  }
+
+  get energyResults(): TableRow[] {
+    const results: TableRow[] = [
       {
         text: "Useful Energy",
         key: "usefulEnergy",
         unit: "MJ",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Final Energy",
         key: "finalEnergy",
         unit: "MJ",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Energy Efficiency",
@@ -392,79 +436,85 @@ export default class EnergyCookingResult extends Vue {
         text: "CO2 Emission",
         key: "emissionCo2",
         unit: "kg",
-        title: true,
+        per10hh: true,
       },
       {
         text: "CO Emission",
         key: "emissionCo",
         unit: "g",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Particles Emission",
         key: "emissionPm",
         unit: "mg",
-        title: true,
-      },
-      {
-        text: "Income",
-        key: "income",
-        unit: "$",
-        title: true,
-      },
-      {
-        text: "Donor expenditures",
-        key: "donorExpenditures",
-        unit: "$",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Wood weight",
         key: "woodWeight",
         unit: "kg",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Charcoal weight",
         key: "charcoalWeight",
         unit: "kg",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Equivalent wood weight",
         key: "woodNeed",
         unit: "kg",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Required biomass area for wood collection",
         key: "woodArea",
         unit: "ha",
-        title: true,
+        per10hh: true,
+      },
+    ];
+    return results;
+  }
+
+  get financialResults(): TableRow[] {
+    const results: TableRow[] = [
+      {
+        text: "Income",
+        key: "income",
+        unit: "$",
+        per10hh: true,
+      },
+      {
+        text: "Donor expenditures",
+        key: "donorExpenditures",
+        unit: "$",
+        per10hh: true,
       },
       {
         text: "Fixed cost",
         key: "fixedCost",
         unit: "$",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Variable cost",
         key: "variableCost",
         unit: "$",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Total cost",
         key: "totalCost",
         unit: "$",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Discounted cost",
         key: "discountedCost",
         unit: "$",
-        title: true,
+        per10hh: true,
       },
       {
         text: "Cost affordability",
@@ -472,6 +522,10 @@ export default class EnergyCookingResult extends Vue {
         unit: "%",
       },
     ];
+    return results;
+  }
+
+  get stoves(): TableRow[] {
     const stoves: TableRow[] = sortBy(
       this.householdCookingModule?.technologyYears[0].technologies,
       (item) => item.stove.index
@@ -479,9 +533,9 @@ export default class EnergyCookingResult extends Vue {
       text: `${cooking.stove.name} - ${cooking.fuel.name}`,
       key: cooking.stove._id,
       decimal: 2,
-      title: true,
+      per10hh: true,
     }));
-    return [...results, ...stoves];
+    return stoves;
   }
 
   get years(): number[] {
@@ -621,10 +675,10 @@ export default class EnergyCookingResult extends Vue {
   }
 
   getTableRowValuePerHH(item: TableRow, result: CategoryResult): string {
-    if (item.title) {
+    if (this.withCount10Households && item.per10hh) {
       const count = result[item.key] || 0;
       const hh = result["householdCount"] || 0;
-      return count > 0 && hh > 0 && item.title
+      return count > 0 && hh > 0 && item.per10hh
         ? `[${formatNumber((10 * count) / hh, {
             maximumFractionDigits: item.decimal,
           })}]`
@@ -1027,9 +1081,12 @@ export default class EnergyCookingResult extends Vue {
       const charcoalWeight =
         technology.fuel._id === "charcoal" ? fuelWeight : 0;
       // Rwood
-      const woodNeed = woodWeight + charcoalWeight / site.woodCarbonation;
+      const woodNeed =
+        site.woodCarbonation > 0
+          ? woodWeight + charcoalWeight / site.woodCarbonation
+          : 0;
       // Awood
-      const woodArea = woodNeed / site.woodDensity;
+      const woodArea = site.woodDensity > 0 ? woodNeed / site.woodDensity : 0;
       // CEmiss
       const emissionCo2 = fuelWeight * technology.fuel.emissionFactorCo2;
       const emissionCo = usefulEnergy * technology.stove.emissionFactorCo;
@@ -1289,15 +1346,65 @@ export default class EnergyCookingResult extends Vue {
       )
       .forEach(([year, siteResult]) => {
         const worksheet = workbook.addWorksheet(`${year}`);
-        worksheet.addRow([undefined, ...categoryNames, "Total"]);
+        if (this.withCount10Households) {
+          let header: (string | undefined)[] = [undefined];
+          categoryNames.forEach((cat) => {
+            header.push(cat, undefined);
+          });
+          header.push("Total");
+          worksheet.addRow(header);
+          worksheet.mergeCells("B1:C1");
+          worksheet.mergeCells("D1:E1");
+          worksheet.mergeCells("F1:G1");
+          worksheet.mergeCells("H1:I1");
+          worksheet.mergeCells("J1:K1");
+          header = [undefined];
+          for (let i = 0; i < categoryNames.length; i++) {
+            header.push("N", "per 10 households");
+          }
+          worksheet.addRow(header);
+        } else {
+          worksheet.addRow([undefined, ...categoryNames, "Total"]);
+        }
         this.lines.forEach((line) => {
-          worksheet.addRow([
+          const row: (string | number | undefined)[] = [
             line.unit ? `${line.text} [${line.unit}]` : line.text,
-            ...socioEconomicCategories.map(
-              (cat) => siteResult.categories[cat][line.key]
-            ),
-            siteResult.categoryTotal[line.key],
-          ]);
+          ];
+          socioEconomicCategories.forEach((cat) => {
+            row.push(siteResult.categories[cat][line.key]);
+            if (this.withCount10Households) {
+              const count = siteResult.categories[cat][line.key] || 0;
+              const hh = siteResult.categories[cat]["householdCount"] || 0;
+              if (count > 0 && hh > 0 && line.per10hh) {
+                row.push(
+                  hh === 0
+                    ? 0
+                    : formatNumber((10 * count) / hh, {
+                        maximumFractionDigits: line.decimal,
+                      })
+                );
+              } else {
+                row.push(undefined);
+              }
+            }
+          });
+          row.push(siteResult.categoryTotal[line.key]);
+          if (this.withCount10Households) {
+            const count = siteResult.categoryTotal[line.key] || 0;
+            const hh = siteResult.categoryTotal["householdCount"] || 0;
+            if (count > 0 && hh > 0 && line.per10hh) {
+              row.push(
+                hh === 0
+                  ? 0
+                  : formatNumber((10 * count) / hh, {
+                      maximumFractionDigits: line.decimal,
+                    })
+              );
+            } else {
+              row.push(undefined);
+            }
+          }
+          worksheet.addRow(row);
         });
       });
 
@@ -1310,7 +1417,7 @@ interface TableRow {
   key: keyof CategoryResult;
   unit?: string;
   decimal?: number;
-  title?: boolean;
+  per10hh?: boolean;
 }
 
 /**
