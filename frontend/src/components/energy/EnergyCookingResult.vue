@@ -1489,27 +1489,78 @@ class CookingTechnologyAction extends Action {
       // intervention count is the target at yearEnd, to be maintained.
       // skip if target is reached
       if (newStove.countPerHousehold < this.intervention.count) {
-        let remainingCount = this.intervention.count;
+        let remainingCountPerHousehold = this.intervention.count;
         if (year < this.yearEnd) {
           // intervention year window: calculate linear progression to reach target
-          remainingCount =
+          remainingCountPerHousehold =
             this.intervention.count / (this.yearEnd - this.yearStart + 1);
         } else {
           // after year end: maintain the target
-          remainingCount = this.intervention.count - newStove.countPerHousehold;
+          remainingCountPerHousehold =
+            this.intervention.count - newStove.countPerHousehold;
         }
-        remainingLoop: for (const item of this.intervention.oldStoveIds
-          .map((id) => this.getStove(input, id))
-          .filter((item) => item.countPerHousehold > 0)) {
-          const replaceCount = clamp(item.countPerHousehold, remainingCount);
-          remainingCount -= replaceCount;
-          const replacePerHousehold = replaceCount;
-          item.countPerHousehold = item.countPerHousehold - replacePerHousehold;
+        const oldStovesToReplace: {
+          id: CookingStoveId;
+          hhCookingInput: HouseholdCookingInput;
+        }[] = this.intervention.oldStoveIds
+          .map((id) => {
+            return {
+              id,
+              hhCookingInput: this.getStove(input, id),
+            };
+          })
+          .filter((item) => item.hhCookingInput.countPerHousehold > 0);
+
+        // stoves to replace can be more than one type
+        // then replacement intervention should
+        // apply to each type, otherwise the target may be reached
+        // by only changing one type, then apply a weight
+        const sumOfCountPerHousehold = chain(oldStovesToReplace)
+          .sumBy((item) => item.hhCookingInput.countPerHousehold)
+          .value();
+        const weights: {
+          [key: string]: number;
+        } = {};
+        this.intervention.oldStoveIds.forEach((id) => {
+          weights[id] =
+            this.getStove(input, id).countPerHousehold / sumOfCountPerHousehold;
+        });
+
+        let replaceCount = 0;
+        const targetRemainingCountPerHousehold = remainingCountPerHousehold;
+        remainingLoop: for (const item of oldStovesToReplace) {
+          const replaceCountPerHousehold =
+            clamp(
+              item.hhCookingInput.countPerHousehold,
+              targetRemainingCountPerHousehold
+            ) * weights[item.id];
+          remainingCountPerHousehold -= replaceCountPerHousehold;
+          item.hhCookingInput.countPerHousehold =
+            item.hhCookingInput.countPerHousehold - replaceCountPerHousehold;
+          // count of new stoves provided by the intervention
+          replaceCount +=
+            replaceCountPerHousehold *
+            site.householdsCount *
+            site.proportions[category];
           newStove.countPerHousehold =
-            newStove.countPerHousehold + replacePerHousehold;
-          if (remainingCount === 0) {
+            newStove.countPerHousehold + replaceCountPerHousehold;
+          if (remainingCountPerHousehold === 0) {
             break remainingLoop;
           }
+        }
+        if (replaceCount > 0) {
+          console.debug(
+            "[",
+            this.intervention.name,
+            "] - ",
+            this.intervention.newStoveId,
+            " - ",
+            year,
+            "[",
+            category,
+            "]: ",
+            replaceCount
+          );
         }
       }
     }
